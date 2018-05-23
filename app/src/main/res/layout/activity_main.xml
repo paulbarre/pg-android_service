@@ -16,10 +16,17 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Elapsed time since service started"/>
+
+        <TextView
             android:id="@+id/value_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text=""/>
+            android:textSize="32sp"
+            android:textAlignment="center"
+            android:text="0"/>
 
         <Button
             android:id="@+id/start_button"

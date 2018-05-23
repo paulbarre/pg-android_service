@@ -59,6 +59,7 @@ class MainService : Service() {
 
     private fun stop() {
         Log.d(">>>", "[MainService] onStartCommand received STOP")
+        startCalendar = null
         stopForeground(true)
         stopSelf()
     }
