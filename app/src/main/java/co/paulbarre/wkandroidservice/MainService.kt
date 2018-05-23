@@ -10,6 +10,14 @@ import java.util.*
 
 class MainService : Service() {
 
+    var startCalendar: Calendar? = null
+
+    val elapsedTime: Long
+        get() {
+            val now = Calendar.getInstance()
+            return startCalendar?.let { (now.timeInMillis - it.timeInMillis) / 1000 } ?: 0
+        }
+
     inner class LocalBinder : Binder() {
         val service: MainService
             get() = this@MainService
@@ -20,9 +28,7 @@ class MainService : Service() {
         const val STOP_COMMAND = "STOP"
     }
 
-    val mBinder = LocalBinder()
-    val mGenerator: Random
-        get() = Random()
+    private val mBinder = LocalBinder()
 
     override fun onBind(intent: Intent): IBinder? {
         Log.d(">>>", "[MainService] onBind")
@@ -47,10 +53,13 @@ class MainService : Service() {
                 .setContentText("OKLM msg")
                 .build()
         startForeground(1, notification)
+
+        startCalendar = Calendar.getInstance()
     }
 
     private fun stop() {
         Log.d(">>>", "[MainService] onStartCommand received STOP")
+        startCalendar = null
         stopForeground(true)
         stopSelf()
     }
