@@ -8,13 +8,19 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
+
+    var mService: MainService? = null
 
     private val mConnection = object : ServiceConnection {
 
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             Log.d(">>>", "[MainActivity] onServiceConnected called")
+            mService = (p1 as? MainService.LocalBinder)?.service
+
+            (findViewById(R.id.value_text) as? TextView)?.text = mService?.elapsedTime.toString()
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
