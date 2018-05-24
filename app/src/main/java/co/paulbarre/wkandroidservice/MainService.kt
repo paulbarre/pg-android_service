@@ -1,10 +1,15 @@
 package co.paulbarre.wkandroidservice
 
+import android.app.AlarmManager
 import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.os.SystemClock
+import android.support.v4.app.NotificationCompat
 import android.util.Log
 import java.util.*
 
@@ -48,13 +53,19 @@ class MainService : Service() {
 
     private fun start() {
         Log.d(">>>", "[MainService] onStartCommand received START")
+
+        val notificationIntent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
         val notification = Notification.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("OKLM Title")
                 .setContentText("OKLM msg")
+                .setContentIntent(pendingIntent)
                 .build()
         startForeground(1, notification)
 
         startCalendar = Calendar.getInstance()
+        scheduleAlarm()
     }
 
     private fun stop() {
@@ -62,5 +73,16 @@ class MainService : Service() {
         startCalendar = null
         stopForeground(true)
         stopSelf()
+    }
+
+    private fun scheduleAlarm() {
+        val seconds = 10
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+        val intent = Intent(this, AlarmReceiver::class.java)
+        val alarmIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + seconds * 1000,
+                alarmIntent)
     }
 }
